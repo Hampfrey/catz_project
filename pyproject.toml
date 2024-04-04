@@ -8,6 +8,8 @@ packages = [{include = "catz_project"}]
 
 [tool.poetry.dependencies]
 python = "^3.9"
+requests = "^2.31.0"
+pyqt6 = "^6.6.1"
 
 
 [build-system]
