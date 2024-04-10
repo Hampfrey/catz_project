@@ -99,11 +99,13 @@ class main_window(QMainWindow):
         lable_text.setText(self.text)
 
     def new_fact(self):
-        self.text = "fact"
+        print("clicked!")
+        return "fact" 
 
     def new_breed(self):
-        self.text = "breed"
-
+        print("clicked!")
+        return "breed"
+ 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
 
