@@ -29,14 +29,13 @@ def api_call(endpoint: str) -> str:
     domain = "https://catfact.ninja/"
     url = domain + endpoint
     response = re.get(url) 
-    clean_api_response(response)
     if response.ok:
         results = response.text
     else:
         results = "Api failure"
     return results
 
-def clean_api_response(response: str) -> str:
+def factify_response(response: str) -> str:
     """
     Cleans the api's response dumbly
 
@@ -52,6 +51,9 @@ def clean_api_response(response: str) -> str:
 
 # Qt
 class main_window(QMainWindow):
+    """
+    The class that makes the visual element of the program
+    """
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Cat Factz")
@@ -71,8 +73,8 @@ class main_window(QMainWindow):
         layout_main.addWidget(lable_title)
 
         # Text
-        lable_text = QLabel()
-        layout_main.addWidget(lable_text)
+        self.label_text = QLabel()
+        layout_main.addWidget(self.label_text)
 
         # Buttons
         layout_buttons = QHBoxLayout()
@@ -81,11 +83,6 @@ class main_window(QMainWindow):
         button_fact.setCheckable(True)
         button_fact.clicked.connect(self.new_fact)
         layout_buttons.addWidget(button_fact)
-
-        button_breed = QPushButton("Breed")
-        button_breed.setCheckable(True)
-        button_breed.clicked.connect(self.new_breed)
-        layout_buttons.addWidget(button_breed)
 
         # Add main
         layout_main.addLayout(layout_buttons)
@@ -96,15 +93,17 @@ class main_window(QMainWindow):
         self.setCentralWidget(gui)
 
         # Display
-        lable_text.setText(self.text)
+        self.label_text.setText(self.text)
+        self.label_text.setAlignment(Qt.AlignmentFlag.AlignTop)
+        self.label_text.setWordWrap(True)
+        self.label_text.setMargin(1)
 
     def new_fact(self):
-        print("clicked!")
-        return "fact" 
-
-    def new_breed(self):
-        print("clicked!")
-        return "breed"
+        """
+        Gets a fact, processes it, and displays it
+        """
+        self.text = "Fact : " + factify_response(api_call("fact"))
+        self.label_text.setText(self.text)
  
 if __name__ == "__main__":
     app = QApplication(sys.argv)
