@@ -1,12 +1,12 @@
 """
-Controller
+Catz Controller
 
-This code gets facts from cat facts api and gives you a little image too
+This code gets facts from cat facts api and displays it in a PyQt6 window
 
 This code contains the following functions:
-  * funct(var), description
-  * command_input(str = "", process = 0), call for an input while 
-    allowing EXIT whenever
+  * api_call(str), gets from the api
+  * factify_response(str), converts api response to str
+  * new_fact(), manages the Qt button
 """
 
 # Imports
