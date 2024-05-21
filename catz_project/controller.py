@@ -42,8 +42,9 @@ introduce = """Welcome to Cat Factz!
 
 To use, press \"Fact\" for a random cat fact, or press \"Breed\" for a random breed!
 
-You can also search for a breed by typing in either the index number (0 to 97), or you can enter a cat breed's name! Leave it blank or as \"Search\" for a random cat.
+You can also search for a breed by typing in either the index number (0 to 97), or you can enter a cat breed's name! Press the breed button to search. Leave it blank or as \"Search\" for a random cat.
 """
+
 # API
 def api_call(endpoint: str) -> str:
     """
@@ -67,7 +68,7 @@ def api_call(endpoint: str) -> str:
 
 def factify_response(response: str) -> str:
     """
-    Cleans the api's response dumbly
+    Cleans the api's response
 
     Args:
         response (str): the unfiltered response from the api
@@ -81,65 +82,174 @@ def factify_response(response: str) -> str:
 
 def breedify_response(response: str, search) -> str:
     """
-    Cleans the api's response dumbly
+    Cleans the api's response and turns it into a cat description
 
     Args:
         response (str): the unfiltered response from the api
     
     Return:
-        cleaned (str): a cleaned version with just the breed
+        (str): a cleaned version with just the breed
     """
     # This is execedingly inefficent, but i'm sick and tired and this is all i
     # can bring myself to do right now
     breeds = response[26:10585].split("},{")
     
     if search != "Search" and search != "":
-        if search.isnumeric() and int(search) < 98 and int(search) > -1: 
+        if (search.isnumeric() and int(search) < 98 and int(search) > -1)
             search = int(search)
             cat = breeds[search].split(",")
+
+            # Console Debug
             print("\nCat = " + str(search))
             print(cat[0][9:(len(cat[0]) - 1)])
             print(breeds[search].split(","))
-            return(madlib(cat))
+
+            return(madlib(cat, search))
+        elif search in ["Donksoy", "Don Sphynx"]:
+        
         else:    
-            for i in range(len(breeds)):
-                search_cat = breeds[i].split(",")
-                searching = search_cat[0][9:(len(search_cat[0]) - 1)].lower()
-                if searching == search.lower():
-                    cat = breeds[i].split(",")
-                    print("\nCat = " + str(search))
-                    print(cat[0][9:(len(cat[0]) - 1)])
-                    return(madlib(cat))
-        return "This cat couldn't be found. "
-            
+            # See madlib comment for why this is like this
+            if :
+                
+            elif search in ["Dwarf cat", "Dwelf"]:
+
+            elif search == "Perfold":
+                # This one is just because
+
+            else:
+                for i in range(len(breeds)):
+                    search_cat = breeds[i].split(",")
+                    searching = search_cat[0][9:(len(search_cat[0]) - 1)].lower()
+                    if searching == search.lower():
+                        cat = breeds[i].split(",")
+
+                        # Console Debug
+                        print("\nCat = " + str(i))
+                        print(cat[0][9:(len(cat[0]) - 1)])
+
+                        return(madlib(cat, i))
+        return "This cat couldn't be found." 
     else:
         random = (round(time.time() * 1000) % 98)
         cat = breeds[random].split(",")
+
+        # Console Debug
         print("\nCat = " + str(random))
         print(cat[0][9:(len(cat[0]) - 1)])
         print(breeds[random].split(","))
-        return(madlib(cat))
+
+        return(madlib(cat, random))
     
-# def a_an(item):
-#     if item[0] in ["a", "e", "i", "o", "u"]:
-#         return "an"
-#     else:
-#         return "a"
-def check_blank(thing):
-    if thing == "":
+def a_an(item: str) -> str:
+    """
+    Determines if an item should use a or an
+    
+    Args:
+        item (str): the item
+    
+    Return:
+        (str): a or an plus the item
+    """
+    if item[0] in ["a", "e", "i", "o", "u"]:
+        return "an " + item
+    else:
+        return "a " + item
+    
+def check_unknown(feature: str) -> str:
+    """
+    Determines if a cat feature is blank, then replaces it with "unknown"
+    
+    Args:
+        feature (str): the feature to check for
+    
+    Return:
+        (str): either the feature, or "unknown"
+    """
+    if feature == "":
         return "unknown"
     else:
-        return thing
-def madlib(breed_list):
+        return feature
+
+def format_nationality(nationality: str) -> str:
+    """
+    Determines what intro to use given on where the cat's from
+    
+    Args:
+        nationality (str): the nationality of a cat
+    
+    Return:
+        (str): the nationality, plus a correct introduction
+    """
+    splited = nationality.split()
+    if splited[0] in ["United", "Arabian",  ]:
+        return "from the " + nationality
+    elif splited[0] == "developed":
+        return "that was " + nationality
+    else:
+        return "from " + nationality
+    
+def check_if_that_cat(name: str) -> str:
+    """
+    Checks if the cat in question is *that* one, specifically our good friend
+    66 who has special unicode characters in its name
+    
+    Args:
+        name (str): the name of a cat
+    
+    Return:
+        (str): the name just without that special charcter
+    """    
+    if name[:7] == "PerFold":
+        return name[:7] + name[13:]
+    else:
+        return name
+    
+def madlib(breed_list: list, id: int) -> str:
     """
     Converts a list of cat features into a sentance.
 
     Args:
         breed_list (str list): the features list in name, nation, origin, coat, 
-                               pattern
+                               order
+    
+    Return:
+        lib (str): the list converted into a clean, human readable sentance
     """
-    # i'm so sorry this one line is the worst thing ive ever coded but tired
-    lib = "The " + breed_list[0][9:(len(breed_list[0]) - 1)] + " is a cat from " + check_blank(breed_list[1][11:(len(breed_list[1]) - 1)]) + "." +"\n\nThey are a(n) " + check_blank(breed_list[2][10:(len(breed_list[2]) - 1)].lower()) + " breed with a(n) " + check_blank(breed_list[3][8:(len(breed_list[3]) - 1)].lower()) + " coat and a(n) " + check_blank(breed_list[4][11:(len(breed_list[4]) - 1)].lower()) + " pattern."
+    # this data is a nightmare to work with ok, i have finished ALL of the 
+    # important logic and have just now realized that a few cats just fail 
+    # because they have commas in their names, this is not what i want to do 
+    # but i cannot bring myself to rewrite everything for two edge cases
+
+    if id == 31:
+        lib = ("The Donskoy, or Don Sphynx is a cat from Russia.\n\nThey are" 
+               + " a unknown breed with a hairless coat and an unknown" +
+               "pattern.")
+    elif id == 33:
+        lib = ("The Dwarf cat, or Dwelf is a cat from unknown.\n\nThey are a" + 
+               " crossbreed breed with an unknown coat and a hairless pattern.")
+    else:
+        # also before you mark me down for this abomination of a function plz 
+        # remember that it was WORSE than this before i did all the +=
+
+        lib = "The " + check_if_that_cat(breed_list[0][9:(len(breed_list[0]) - 1)])
+        lib += " is a cat " 
+        lib += format_nationality(check_unknown(breed_list[1][11:(
+                                len(breed_list[1]) - 1)])) 
+        lib += "." 
+        lib += "\n\nThey are "
+        lib += a_an(check_unknown(breed_list[2][10:(
+                    len(breed_list[2]) - 1)].lower())) 
+        lib += " breed with " 
+        lib += a_an(check_unknown(breed_list[3][8:(
+                    len(breed_list[3]) - 1)].lower()))
+        lib += " coat and " 
+        lib += a_an(check_unknown(breed_list[4][11:(
+                    len(breed_list[4]) - 1)].lower())) 
+        lib += " pattern."
+
+        # literally in the last commit (before i even added a ton of the word 
+        # logic functions), this was a single line of code 410 characters long
+
     return lib
 
 # Qt
@@ -224,11 +334,13 @@ class main_window(QMainWindow):
         """
         Gets a breed, processes it, and displays it
         """
-        
-        self.display_text = "Cat : " + breedify_response(api_call("breeds?limit=98"), self.text_search.text())
+        self.display_text = ("Cat : " + 
+                             breedify_response(api_call("breeds?limit=98"), 
+                             self.text_search.text()))
         self.label_text.setText(self.display_text)
  
 if __name__ == "__main__":
+    print(a_an("unkownhelp"))
     app = QApplication(sys.argv)
 
     window = main_window()
