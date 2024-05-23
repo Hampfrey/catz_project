@@ -95,27 +95,27 @@ def breedify_response(response: str, search) -> str:
     breeds = response[26:10585].split("},{")
     
     if search != "Search" and search != "":
-        if (search.isnumeric() and int(search) < 98 and int(search) > -1)
+        if (search.isnumeric() and int(search) < 98 and int(search) > -1):
             search = int(search)
             cat = breeds[search].split(",")
 
             # Console Debug
             print("\nCat = " + str(search))
             print(cat[0][9:(len(cat[0]) - 1)])
-            print(breeds[search].split(","))
 
             return(madlib(cat, search))
-        elif search in ["Donksoy", "Don Sphynx"]:
-        
         else:    
             # See madlib comment for why this is like this
-            if :
-                
-            elif search in ["Dwarf cat", "Dwelf"]:
-
-            elif search == "Perfold":
+            if search.lower() in ["donksoy", "don sphynx"]:
+                cat = breeds[31].split(",")
+                return(madlib(cat, 31))
+            elif search.lower() in ["dwarf cat", "dwelf"]:
+                cat = breeds[33].split(",")
+                return(madlib(cat, 33))
+            elif search.lower() == "perfold":
                 # This one is just because
-
+                cat = breeds[66].split(",")
+                return(madlib(cat, 66))
             else:
                 for i in range(len(breeds)):
                     search_cat = breeds[i].split(",")
@@ -136,7 +136,6 @@ def breedify_response(response: str, search) -> str:
         # Console Debug
         print("\nCat = " + str(random))
         print(cat[0][9:(len(cat[0]) - 1)])
-        print(breeds[random].split(","))
 
         return(madlib(cat, random))
     
@@ -191,7 +190,8 @@ def format_nationality(nationality: str) -> str:
 def check_if_that_cat(name: str) -> str:
     """
     Checks if the cat in question is *that* one, specifically our good friend
-    66 who has special unicode characters in its name
+    66 who has special unicode characters in its name, then removes those 
+    special characters
     
     Args:
         name (str): the name of a cat
@@ -211,7 +211,7 @@ def madlib(breed_list: list, id: int) -> str:
     Args:
         breed_list (str list): the features list in name, nation, origin, coat, 
                                order
-    
+
     Return:
         lib (str): the list converted into a clean, human readable sentance
     """
@@ -231,7 +231,8 @@ def madlib(breed_list: list, id: int) -> str:
         # also before you mark me down for this abomination of a function plz 
         # remember that it was WORSE than this before i did all the +=
 
-        lib = "The " + check_if_that_cat(breed_list[0][9:(len(breed_list[0]) - 1)])
+        lib = "The " + check_if_that_cat(breed_list[0][9:(
+                                         len(breed_list[0]) - 1)])
         lib += " is a cat " 
         lib += format_nationality(check_unknown(breed_list[1][11:(
                                 len(breed_list[1]) - 1)])) 
@@ -249,8 +250,20 @@ def madlib(breed_list: list, id: int) -> str:
 
         # literally in the last commit (before i even added a ton of the word 
         # logic functions), this was a single line of code 410 characters long
-
     return lib
+
+def random_color() -> str:
+    """
+    Provides a random color for the program on each start
+
+    Return:
+        color (str): the color to use
+    """
+    color = ["red", "orange", "yellow", "lime", "cyan", "pink", "white"]
+    random = (round(time.time() * 1000) % 6)
+    return color[random]
+    
+
 
 # Qt
 class main_window(QMainWindow):
@@ -287,21 +300,23 @@ class main_window(QMainWindow):
 
         button_fact = QPushButton("Fact")
         button_fact.setFont(QFont("Courier"))
-        button_fact.setCheckable(True)
+        button_fact.setCheckable(False)
         button_fact.clicked.connect(self.new_fact)
         layout_input.addWidget(button_fact)
 
         button_breed = QPushButton("Breed")
         button_breed.setFont(QFont("Courier"))
-        button_breed.setCheckable(True)
+        button_breed.setCheckable(False)
         button_breed.clicked.connect(self.new_breed)
         layout_input.addWidget(button_breed)
 
+        # Line Edit
         self.text_search = QLineEdit("Search")
         self.text_search.setFont(QFont("Courier"))
         self.text_search.setFixedWidth(100)
         layout_input.addWidget(self.text_search)
 
+        # Decor
         label_decor = QLabel(decor)
         label_decor.setFont(QFont("Courier"))
         label_decor.setAlignment(Qt.AlignmentFlag.AlignRight | 
@@ -316,7 +331,7 @@ class main_window(QMainWindow):
         gui = QWidget()
         gui.setLayout(layout_main)
         self.setCentralWidget(gui)
-
+        
         # Display
         self.label_text.setText(self.display_text)
         self.label_text.setAlignment(Qt.AlignmentFlag.AlignTop)
@@ -340,10 +355,14 @@ class main_window(QMainWindow):
         self.label_text.setText(self.display_text)
  
 if __name__ == "__main__":
-    print(a_an("unkownhelp"))
     app = QApplication(sys.argv)
 
     window = main_window()
+    window.setStyleSheet("background-color: black;" +
+                         "border: 1px solid " + random_color() + ";" +
+                         "color: " + random_color() + ";")
     window.show()
-
     app.exec()
+
+
+
