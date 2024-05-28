@@ -17,7 +17,7 @@ from PyQt6.QtCore import QSize, Qt
 from PyQt6.QtGui import QFont
 from PyQt6.QtWidgets import *
 
-# Constants
+# Texts
 title = """
  /'''\   /\  ''|''   .">'''''>
 |       /__\   |     |  _  _ |
@@ -29,20 +29,31 @@ title = """
 """
 
 decor = """
-  ,~,   |
-{,(@),} |
-   Y    |
-  (~    |
-   )    |
- ~{     |
-   }    |
+                .-''\/''=-_
+               /          /
+      . ' ' ' |/.   _  _  | 
+    .             "=__x_.'
+    '               ---_ 
+ .--|          ]'''''-___)
+/ -  '.         \\
+\  ---  "--""'\__)    Cat Factz
+  "''''''
 """
 
 introduce = """Welcome to Cat Factz!
 
-To use, press \"Fact\" for a random cat fact, or press \"Breed\" for a random breed!
+To use, press \"Fact\" for a random 
+cat fact, or press \"Enter\" with
+\"Search\" or nothing as the query 
+for a random breed!
 
-You can also search for a breed by typing in either the index number (0 to 97), or you can enter a cat breed's name! Press the breed button to search. Leave it blank or as \"Search\" for a random cat.
+To search for a breed by type in 
+either the index number (0 to 97), 
+or you can enter a cat breed's 
+name! Press \"Enter\" to search
+
+Enter \"Intro\", if you'd like to 
+refrence this :3
 """
 
 # API
@@ -105,21 +116,25 @@ def breedify_response(response: str, search) -> str:
 
             return(madlib(cat, search))
         else:    
-            # See madlib comment for why this is like this
+            # See madlib comment for why these are here
             if search.lower() in ["donksoy", "don sphynx"]:
-                cat = breeds[31].split(",")
-                return(madlib(cat, 31))
+                return(madlib("woo", 31))
             elif search.lower() in ["dwarf cat", "dwelf"]:
-                cat = breeds[33].split(",")
-                return(madlib(cat, 33))
+                return(madlib("woo", 33))
+            elif search.lower() in ["kurilian bobtail", 
+                                    "kuril islands bobtail"]:
+                return(madlib("woo", 49))
             elif search.lower() == "perfold":
                 # This one is just because
                 cat = breeds[66].split(",")
                 return(madlib(cat, 66))
+            elif search.lower() == "intro":
+                return introduce
             else:
                 for i in range(len(breeds)):
                     search_cat = breeds[i].split(",")
-                    searching = search_cat[0][9:(len(search_cat[0]) - 1)].lower()
+                    searching = search_cat[0][9:(len(search_cat[0]) - 1
+                                                 )].lower()
                     if searching == search.lower():
                         cat = breeds[i].split(",")
 
@@ -139,6 +154,76 @@ def breedify_response(response: str, search) -> str:
 
         return(madlib(cat, random))
     
+def madlib(breed_list: list, id: int) -> str:
+    """
+    Converts a list of cat features into a sentance.
+
+    Args:
+        breed_list (str list): the features list in name, nation, origin, coat, 
+                               order
+
+    Return:
+        lib (str): the list converted into a clean, human readable sentance
+    """
+    # this data is a nightmare to work with ok, i have finished ALL of the 
+    # important logic and have just now realized that a few cats just fail 
+    # because they have commas in their names, this is not what i want to do 
+    # but i cannot bring myself to rewrite everything for two (now three) edge 
+    # cases
+
+    if id == 0:
+        # for some reason cat 0 has just decided that it wants an extra " in it
+        # and even though i think i know how to fix it, i can just put it here
+        lib = ("Cat : The Abyssian is a cat from Ethiopia.\n\nThey " 
+               + "are a natural/standard breed with a short coat and a ticked" +
+               "pattern.")
+
+    elif id == 31:
+        lib = ("Cat : The Donskoy, or Don Sphynx is a cat from Russia.\n\nThey" 
+               + " are an unknown breed with a hairless coat and an unknown" +
+               " pattern.")
+    elif id == 33:
+        lib = ("Cat : The Dwarf cat, or Dwelf is a cat from unknown.\n\nThey" 
+               + "are a crossbreed breed with an unknown coat and a hairless" + 
+               " pattern.")
+    elif id == 49:
+        lib = ("Cat : The Kurilian Bobtail, or Kuril Islands Bobtail is a cat"  
+               + "from Eastern Russia/Japan.\n\nThey are a natural breed " +
+               "with an short/long coat and an unknown pattern.")
+    else:
+        # also before you mark me down for this abomination of a function plz 
+        # remember that it was WORSE than this before i did all the +=
+
+        lib = "Cat : The " + check_if_that_cat(breed_list[0][9:(
+                                         len(breed_list[0]) - 1)])
+        lib += " is a cat " 
+        lib += format_nationality(format(breed_list[1][11:(
+                                len(breed_list[1]) - 1)])) 
+        lib += "." 
+        lib += "\n\nThey are "
+        lib += a_an(format(breed_list[2][10:(len(breed_list[2]) - 1)].lower())) 
+        lib += " breed with " 
+        lib += a_an(format(breed_list[3][8:(len(breed_list[3]) - 1)].lower()))
+        lib += " coat and " 
+        lib += a_an(format(breed_list[4][11:(len(breed_list[4]) - 1)].lower())) 
+        lib += " pattern."
+
+        # literally in the last commit (before i even added a ton of the word 
+        # logic functions), this was a single line of code 410 characters long
+    return lib
+def format(item: str) -> str:
+    """
+    Trys to improve the madlib function by reducing repetition
+    
+    Args:
+        item (str): the item
+    
+    Return:
+        (str): the item after being run through check_unknown and slashes
+    """
+    return slashes(check_unknown(item))
+
+
 def a_an(item: str) -> str:
     """
     Determines if an item should use a or an
@@ -153,6 +238,22 @@ def a_an(item: str) -> str:
         return "an " + item
     else:
         return "a " + item
+    
+def slashes(item: str) -> str:
+    """
+    Finds unwanted slash characters and removes them
+    
+    Args:
+        item (str): the item
+    
+    Return:
+        (str): the item without the unwanted slashes
+    """    
+    slashless = ""
+    for i in item:
+        if i != "\\":
+            slashless += i
+    return slashless
     
 def check_unknown(feature: str) -> str:
     """
@@ -203,67 +304,6 @@ def check_if_that_cat(name: str) -> str:
         return name[:7] + name[13:]
     else:
         return name
-    
-def madlib(breed_list: list, id: int) -> str:
-    """
-    Converts a list of cat features into a sentance.
-
-    Args:
-        breed_list (str list): the features list in name, nation, origin, coat, 
-                               order
-
-    Return:
-        lib (str): the list converted into a clean, human readable sentance
-    """
-    # this data is a nightmare to work with ok, i have finished ALL of the 
-    # important logic and have just now realized that a few cats just fail 
-    # because they have commas in their names, this is not what i want to do 
-    # but i cannot bring myself to rewrite everything for two edge cases
-
-    if id == 31:
-        lib = ("The Donskoy, or Don Sphynx is a cat from Russia.\n\nThey are" 
-               + " a unknown breed with a hairless coat and an unknown" +
-               "pattern.")
-    elif id == 33:
-        lib = ("The Dwarf cat, or Dwelf is a cat from unknown.\n\nThey are a" + 
-               " crossbreed breed with an unknown coat and a hairless pattern.")
-    else:
-        # also before you mark me down for this abomination of a function plz 
-        # remember that it was WORSE than this before i did all the +=
-
-        lib = "The " + check_if_that_cat(breed_list[0][9:(
-                                         len(breed_list[0]) - 1)])
-        lib += " is a cat " 
-        lib += format_nationality(check_unknown(breed_list[1][11:(
-                                len(breed_list[1]) - 1)])) 
-        lib += "." 
-        lib += "\n\nThey are "
-        lib += a_an(check_unknown(breed_list[2][10:(
-                    len(breed_list[2]) - 1)].lower())) 
-        lib += " breed with " 
-        lib += a_an(check_unknown(breed_list[3][8:(
-                    len(breed_list[3]) - 1)].lower()))
-        lib += " coat and " 
-        lib += a_an(check_unknown(breed_list[4][11:(
-                    len(breed_list[4]) - 1)].lower())) 
-        lib += " pattern."
-
-        # literally in the last commit (before i even added a ton of the word 
-        # logic functions), this was a single line of code 410 characters long
-    return lib
-
-def random_color() -> str:
-    """
-    Provides a random color for the program on each start
-
-    Return:
-        color (str): the color to use
-    """
-    color = ["red", "orange", "yellow", "lime", "cyan", "pink", "white"]
-    random = (round(time.time() * 1000) % 6)
-    return color[random]
-    
-
 
 # Qt
 class main_window(QMainWindow):
@@ -298,28 +338,29 @@ class main_window(QMainWindow):
         # Input
         layout_input = QVBoxLayout()
 
+        # Fact
         button_fact = QPushButton("Fact")
         button_fact.setFont(QFont("Courier"))
         button_fact.setCheckable(False)
         button_fact.clicked.connect(self.new_fact)
         layout_input.addWidget(button_fact)
 
-        button_breed = QPushButton("Breed")
+        # Line Edit
+        self.text_search = QLineEdit("Search")
+        self.text_search.setFont(QFont("Courier"))
+        layout_input.addWidget(self.text_search)
+
+        # Enter
+        button_breed = QPushButton("Enter")
         button_breed.setFont(QFont("Courier"))
         button_breed.setCheckable(False)
         button_breed.clicked.connect(self.new_breed)
         layout_input.addWidget(button_breed)
 
-        # Line Edit
-        self.text_search = QLineEdit("Search")
-        self.text_search.setFont(QFont("Courier"))
-        self.text_search.setFixedWidth(100)
-        layout_input.addWidget(self.text_search)
-
         # Decor
         label_decor = QLabel(decor)
         label_decor.setFont(QFont("Courier"))
-        label_decor.setAlignment(Qt.AlignmentFlag.AlignRight | 
+        label_decor.setAlignment(Qt.AlignmentFlag.AlignLeft | 
                                  Qt.AlignmentFlag.AlignBottom)
         layout_input.addWidget(label_decor)
 
@@ -338,6 +379,17 @@ class main_window(QMainWindow):
         self.label_text.setWordWrap(True)
         self.label_text.setMargin(1)
 
+    def random_color() -> str:
+        """
+        Provides a random color for the program
+
+        Return:
+            color (str): the color to use
+        """
+        color = ["red", "orange", "yellow", "lime", "cyan", "pink", "white"]
+        random = (round(time.time() * 1000) % 6)
+        return color[random]
+
     def new_fact(self):
         """
         Gets a fact, processes it, and displays it
@@ -349,8 +401,7 @@ class main_window(QMainWindow):
         """
         Gets a breed, processes it, and displays it
         """
-        self.display_text = ("Cat : " + 
-                             breedify_response(api_call("breeds?limit=98"), 
+        self.display_text = (breedify_response(api_call("breeds?limit=98"), 
                              self.text_search.text()))
         self.label_text.setText(self.display_text)
  
@@ -359,10 +410,8 @@ if __name__ == "__main__":
 
     window = main_window()
     window.setStyleSheet("background-color: black;" +
-                         "border: 1px solid " + random_color() + ";" +
-                         "color: " + random_color() + ";")
+                         "border: 1px solid " + 
+                         main_window.random_color() + ";" +
+                         "color: " + main_window.random_color() + ";")
     window.show()
     app.exec()
-
-
-
