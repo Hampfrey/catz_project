@@ -1,21 +1,24 @@
 """
 Catz Controller
 
-This code gets facts from cat facts api and displays it in a PyQt6 window
+This is the controller for the Cat Factz app, it runs all of the API and text processing
 
 This code contains the following functions:
-  * api_call(str), gets from the api
-  * factify_response(str), converts api response to str
-  * new_fact(), manages the Qt button
+  * api_call(str), requests info from the api
+  * factify_response(response), trims a fact into something displayable
+  * breedify_response(response), processes the breed list for madlib
+  * madlib(str list, int), converts a list of cat features into the cat
+  * format(str), a merger of check_unknown() and slashes()
+  * check_unknown(str), converts blank strings into "unknown"
+  * slashes(str), removes backslashes from strings
+  * a_an(str), figures out if a str should use a or an and adds it
+  * format_nationality(str), figures out how to segway into the nationality
+  * check_if_that_cat(str), removes special characters from the cat with them
 """
 
 # Imports
 import requests as re
-import sys
 import time
-from PyQt6.QtCore import QSize, Qt
-from PyQt6.QtGui import QFont
-from PyQt6.QtWidgets import *
 
 # Texts
 title = """
@@ -63,7 +66,7 @@ def api_call(endpoint: str) -> str:
 
     Args:
         endpoint (str): where to direct the api, in this case either fact or 
-        breed, with facts as an unused and unsupported
+                        breeds?limit=98
     
     Return:
         results (str): the api return
@@ -161,6 +164,8 @@ def madlib(breed_list: list, id: int) -> str:
     Args:
         breed_list (str list): the features list in name, nation, origin, coat, 
                                order
+        id (int): the id of the inputted cat, this is so that the madlib can    
+                  easily take over if one of the broken cats gets inputted
 
     Return:
         lib (str): the list converted into a clean, human readable sentance
@@ -211,6 +216,7 @@ def madlib(breed_list: list, id: int) -> str:
         # literally in the last commit (before i even added a ton of the word 
         # logic functions), this was a single line of code 410 characters long
     return lib
+
 def format(item: str) -> str:
     """
     Trys to improve the madlib function by reducing repetition
@@ -223,6 +229,36 @@ def format(item: str) -> str:
     """
     return slashes(check_unknown(item))
 
+def check_unknown(feature: str) -> str:
+    """
+    Determines if a cat feature is blank, then replaces it with "unknown"
+    
+    Args:
+        feature (str): the feature to check for
+    
+    Return:
+        (str): either the feature, or "unknown"
+    """
+    if feature == "":
+        return "unknown"
+    else:
+        return feature
+
+def slashes(item: str) -> str:
+    """
+    Finds unwanted slash characters and removes them
+    
+    Args:
+        item (str): the item
+    
+    Return:
+        (str): the item without the unwanted slashes
+    """    
+    slashless = ""
+    for i in item:
+        if i != "\\":
+            slashless += i
+    return slashless
 
 def a_an(item: str) -> str:
     """
@@ -239,37 +275,6 @@ def a_an(item: str) -> str:
     else:
         return "a " + item
     
-def slashes(item: str) -> str:
-    """
-    Finds unwanted slash characters and removes them
-    
-    Args:
-        item (str): the item
-    
-    Return:
-        (str): the item without the unwanted slashes
-    """    
-    slashless = ""
-    for i in item:
-        if i != "\\":
-            slashless += i
-    return slashless
-    
-def check_unknown(feature: str) -> str:
-    """
-    Determines if a cat feature is blank, then replaces it with "unknown"
-    
-    Args:
-        feature (str): the feature to check for
-    
-    Return:
-        (str): either the feature, or "unknown"
-    """
-    if feature == "":
-        return "unknown"
-    else:
-        return feature
-
 def format_nationality(nationality: str) -> str:
     """
     Determines what intro to use given on where the cat's from
@@ -304,114 +309,4 @@ def check_if_that_cat(name: str) -> str:
         return name[:7] + name[13:]
     else:
         return name
-
-# Qt
-class main_window(QMainWindow):
-    """
-    The class that makes the visual element of the program
-    """
-    def __init__(self):
-        super().__init__()
-        self.setWindowTitle("Cat Factz")
-
-        self.display_text = introduce
-
-        # Create our Layouts
-        layout_main = QVBoxLayout()
-
-        # Title 
-        label_title = QLabel(title)
-
-        label_title.setFont(QFont("Courier"))
-        label_title.setAlignment(Qt.AlignmentFlag.AlignHCenter | 
-                                 Qt.AlignmentFlag.AlignTop)
-        layout_main.addWidget(label_title)
-
-        # Content
-        layout_content = QHBoxLayout()
-
-        # Text
-        self.label_text = QLabel()
-        self.label_text.setFont(QFont("Courier"))
-        layout_content.addWidget(self.label_text)
-
-        # Input
-        layout_input = QVBoxLayout()
-
-        # Fact
-        button_fact = QPushButton("Fact")
-        button_fact.setFont(QFont("Courier"))
-        button_fact.setCheckable(False)
-        button_fact.clicked.connect(self.new_fact)
-        layout_input.addWidget(button_fact)
-
-        # Line Edit
-        self.text_search = QLineEdit("Search")
-        self.text_search.setFont(QFont("Courier"))
-        layout_input.addWidget(self.text_search)
-
-        # Enter
-        button_breed = QPushButton("Enter")
-        button_breed.setFont(QFont("Courier"))
-        button_breed.setCheckable(False)
-        button_breed.clicked.connect(self.new_breed)
-        layout_input.addWidget(button_breed)
-
-        # Decor
-        label_decor = QLabel(decor)
-        label_decor.setFont(QFont("Courier"))
-        label_decor.setAlignment(Qt.AlignmentFlag.AlignLeft | 
-                                 Qt.AlignmentFlag.AlignBottom)
-        layout_input.addWidget(label_decor)
-
-        # Add main
-        layout_content.addLayout(layout_input)
-        layout_main.addLayout(layout_content)
-
-        # Set the main layout
-        gui = QWidget()
-        gui.setLayout(layout_main)
-        self.setCentralWidget(gui)
-        
-        # Display
-        self.label_text.setText(self.display_text)
-        self.label_text.setAlignment(Qt.AlignmentFlag.AlignTop)
-        self.label_text.setWordWrap(True)
-        self.label_text.setMargin(1)
-
-    def random_color() -> str:
-        """
-        Provides a random color for the program
-
-        Return:
-            color (str): the color to use
-        """
-        color = ["red", "orange", "yellow", "lime", "cyan", "pink", "white"]
-        random = (round(time.time() * 1000) % 6)
-        return color[random]
-
-    def new_fact(self):
-        """
-        Gets a fact, processes it, and displays it
-        """
-        self.display_text = "Fact : " + factify_response(api_call("fact"))
-        self.label_text.setText(self.display_text)
-
-    def new_breed(self):
-        """
-        Gets a breed, processes it, and displays it
-        """
-        self.display_text = (breedify_response(api_call("breeds?limit=98"), 
-                             self.text_search.text()))
-        self.label_text.setText(self.display_text)
  
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-
-    window = main_window()
-    window.setStyleSheet("background-color: black;" +
-                         "border: 1px solid " + 
-                         main_window.random_color() + ";" +
-                         "color: " + main_window.random_color() + ";")
-    window.show()
-    app.exec()
