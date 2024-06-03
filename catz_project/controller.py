@@ -1,7 +1,8 @@
 """
 Catz Controller
 
-This is the controller for the Cat Factz app, it runs all of the API and text processing
+This is the controller for the Cat Factz app, it runs all of the API and text 
+processing
 
 This code contains the following functions:
   * api_call(str), requests info from the api
@@ -309,4 +310,3 @@ def check_if_that_cat(name: str) -> str:
         return name[:7] + name[13:]
     else:
         return name
- 

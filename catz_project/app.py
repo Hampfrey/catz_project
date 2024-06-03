@@ -1,7 +1,8 @@
 """
 Cat Factz App
 
-This is the App for Cat Factz, it runs the window and pyqt aspects of the code, while leaving the processing to controller
+This is the App for Cat Factz, it runs the window and pyqt aspects of the code, 
+while leaving the processing to controller
 
 This code contains the following functions:
   * random_color(), provides the window with a random color
@@ -105,20 +106,21 @@ class main_window(QMainWindow):
         """
         Gets a fact, processes it, and displays it
         """
-        self.display_text = "Fact : " + controller.factify_response(controller.api_call("fact"))
+        self.display_text = ("Fact : " + controller.factify_response(
+                             controller.api_call("fact")))
         self.label_text.setText(self.display_text)
 
     def new_breed(self):
         """
         Gets a breed, processes it, and displays it
         """
-        self.display_text = (controller.breedify_response(controller.api_call("breeds?limit=98"), 
+        self.display_text = (controller.breedify_response(
+                             controller.api_call("breeds?limit=98"), 
                              self.text_search.text()))
         self.label_text.setText(self.display_text)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-
     window = main_window()
     window.setStyleSheet("background-color: black;" +
                          "border: 1px solid " + 
