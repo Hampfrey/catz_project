@@ -10,6 +10,7 @@ This code contains the following functions:
   * new_breed(), starts up the breed logic, looks at search, and displays it
                  when finished
 """
+# Imports
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont
 from PyQt6.QtWidgets import *
@@ -17,8 +18,11 @@ import time
 import controller
 import sys
 
+# Constants
+font = "Courier"
+
 # Qt
-class main_window(QMainWindow):
+class MainWindow(QMainWindow):
     """
     The class that makes the visual pyqt6 elements of the program
     """
@@ -34,7 +38,7 @@ class main_window(QMainWindow):
         # Title 
         label_title = QLabel(controller.title)
 
-        label_title.setFont(QFont("Courier"))
+        label_title.setFont(QFont(font))
         label_title.setAlignment(Qt.AlignmentFlag.AlignHCenter | 
                                  Qt.AlignmentFlag.AlignTop)
         layout_main.addWidget(label_title)
@@ -44,7 +48,7 @@ class main_window(QMainWindow):
 
         # Text
         self.label_text = QLabel()
-        self.label_text.setFont(QFont("Courier"))
+        self.label_text.setFont(QFont(font))
         layout_content.addWidget(self.label_text)
 
         # Input
@@ -52,26 +56,26 @@ class main_window(QMainWindow):
 
         # Fact
         button_fact = QPushButton("Fact")
-        button_fact.setFont(QFont("Courier"))
+        button_fact.setFont(QFont(font))
         button_fact.setCheckable(False)
         button_fact.clicked.connect(self.new_fact)
         layout_input.addWidget(button_fact)
 
         # Line Edit
         self.text_search = QLineEdit("Search")
-        self.text_search.setFont(QFont("Courier"))
+        self.text_search.setFont(QFont(font))
         layout_input.addWidget(self.text_search)
 
         # Enter
         button_breed = QPushButton("Enter")
-        button_breed.setFont(QFont("Courier"))
+        button_breed.setFont(QFont(font))
         button_breed.setCheckable(False)
         button_breed.clicked.connect(self.new_breed)
         layout_input.addWidget(button_breed)
 
         # Decor
         label_decor = QLabel(controller.decor)
-        label_decor.setFont(QFont("Courier"))
+        label_decor.setFont(QFont(font))
         label_decor.setAlignment(Qt.AlignmentFlag.AlignLeft | 
                                  Qt.AlignmentFlag.AlignBottom)
         layout_input.addWidget(label_decor)
@@ -99,7 +103,7 @@ class main_window(QMainWindow):
             color (str): the color to use
         """
         color = ["red", "orange", "yellow", "lime", "cyan", "pink", "white"]
-        random = (round(time.time() * 1000) % 6)
+        random = (round(time.time() * 1000) % 7)
         return color[random]
 
     def new_fact(self):
@@ -121,10 +125,10 @@ class main_window(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    window = main_window()
+    window = MainWindow()
     window.setStyleSheet("background-color: black;" +
                          "border: 1px solid " + 
-                         main_window.random_color() + ";" +
-                         "color: " + main_window.random_color() + ";")
+                         MainWindow.random_color() + ";" +
+                         "color: " + MainWindow.random_color() + ";")
     window.show()
     app.exec()
